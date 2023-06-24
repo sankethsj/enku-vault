@@ -1,37 +1,71 @@
-import customtkinter
-from src.utils import colors
-from src.utils.store import read_data
+from pathlib import Path
+
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
+
+from src.components.collapsible_frame import CollapsingFrame
+from src.utils.store import read_data, write_data
+
+IMG_PATH = Path(__file__).parent.parent / 'assets'
+
+class PasswordManager(ttk.Frame):
+
+    def __init__(self, pwd_mgr_page):
+        super().__init__(master=pwd_mgr_page)
+
+        heading = ttk.Label(pwd_mgr_page, text="Manage your passwords", font=("Helvetica", 18))
+        heading.pack(pady=20)
+
+        refresh_btn = ttk.Button(pwd_mgr_page, 
+                                 text="Refresh",
+                                 bootstyle=INFO,
+                                 cursor="hand2",
+                                 image=ttk.PhotoImage(file=IMG_PATH/'refresh-regular-24.png'),
+                                 command=self.list_passwords
+                                )
+        refresh_btn.pack(side=TOP, padx=8, pady=8, anchor="e")
+
+        self.content_frame = ttk.Frame(pwd_mgr_page, style=DARK)
+        self.content_frame.pack(fill=BOTH, expand=True)
+        self.app_data = None
+        self.list_passwords()
+
+        
+    def list_passwords(self):
+
+        for child in self.content_frame.winfo_children():
+            child.destroy()
+
+        cf = CollapsingFrame(self.content_frame)
+        cf.pack(fill=BOTH)
+
+        self.app_data = read_data()
+
+        passwords_data = self.app_data["passwords"]
+        for data in passwords_data:
+            group = ttk.Frame(cf, padding=10, style=PRIMARY, border=1, borderwidth=2)
+
+            w = ttk.Text(group, height=1, borderwidth=0)
+            w.insert(1.0, data["username"])
+            w.pack()
+            w.configure(state="disabled")
+
+            w = ttk.Text(group, height=1, borderwidth=0)
+            w.insert(1.0, data["password"])
+            w.pack()
+            w.configure(state="disabled")
+
+            ttk.Label(group, text=data["created_at"]).pack(fill=X)
+            ttk.Button(group, text="Delete", cursor="hand2", style=DANGER, command= lambda x=data["name"]: self._delete_password_info(x)).pack(fill=X)
+            cf.add(child=group, title=data["name"])
 
 
-class PasswordManager(customtkinter.CTkFrame):
+    def _delete_password_info(self, id):
+        print("Clicked delete button, id :", id)
+        passwords = self.app_data["passwords"]
+        self.app_data["passwords"] = [p for p in passwords if p["name"] != id]
 
-    def __init__(self, master):
-        super().__init__(master)
+        write_data(self.app_data)
 
-        mainframe = customtkinter.CTkFrame(master, fg_color=colors.MAINFRAME_BG)
-        mainframe.pack(fill="both", expand=True)
+        self.list_passwords()
 
-        mainframe.columnconfigure(0, weight=1)
-        mainframe.rowconfigure(0)
-        mainframe.rowconfigure(1, weight=1)
-
-        heading_font = customtkinter.CTkFont(weight='bold', size=20)
-        heading = customtkinter.CTkLabel(mainframe, text="Password Manager", font=heading_font)
-        heading.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-
-        scroll_frame = customtkinter.CTkScrollableFrame(mainframe)
-        scroll_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
-
-        app_data = read_data()
-
-        for i, data in enumerate(app_data["passwords"]):
-            pw_info = customtkinter.CTkFrame(scroll_frame, border_width=1, border_color=colors.BG_COLOR)
-            name = customtkinter.CTkLabel(pw_info, text=data["name"])
-            name.grid(row=0, column=0, padx=10, pady=10)
-            username = customtkinter.CTkLabel(pw_info, text=data["username"])
-            username.grid(row=0, column=1, padx=10, pady=10)
-            password = customtkinter.CTkLabel(pw_info, text=data["password"])
-            password.grid(row=0, column=2, padx=10, pady=10)
-            created_time = customtkinter.CTkLabel(pw_info, text=data["created_at"])
-            created_time.grid(row=0, column=3, padx=10, pady=10)
-            pw_info.pack(padx=10, pady=(10, 0), side=customtkinter.TOP)

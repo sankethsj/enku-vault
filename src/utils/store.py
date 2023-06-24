@@ -17,6 +17,13 @@ print(FILE_FULLPATH)
 def save_password_to_file(data:dict):
 
     app_data = read_data()
+
+    pwds = [p for p in app_data["passwords"] if p["name"] == data["name"]]
+
+    if pwds:
+        raise ValueError(f"Password for the account '{data['name']}' already exists."
+                         "Either delete existing password or change the account name.")
+
     app_data["passwords"].append(data)
 
     write_data(app_data)

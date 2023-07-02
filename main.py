@@ -3,12 +3,13 @@ from ttkbootstrap.constants import *
 
 from src.frames.password_generator import PasswordGenerator
 from src.frames.password_manager import PasswordManager
+from src.utils.path_handler import resource_path
 
 APP_NAME = "Enku Vault"
 APP_THEME = "darkly"
 MIN_SCREEN_SIZE = (300, 500) # (width, height)
 SCREEN_SIZE = (400, 600) # (width, height)
-ICON = 'src/assets/icon.png'
+ICON = resource_path('src/assets/icon.png')
 
 
 root = ttk.Window(title=APP_NAME, minsize=MIN_SCREEN_SIZE, size=SCREEN_SIZE, themename=APP_THEME, iconphoto=ICON)

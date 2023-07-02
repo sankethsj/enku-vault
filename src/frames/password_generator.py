@@ -135,16 +135,11 @@ class PasswordGenerator(ttk.Frame):
 
 
     def submit_form(self):
-
-        print("Submit button clicked")
-
         self.toast_value.set("")
 
         name = self.name.get()
         username = self.username.get()
         password = self.password.get()
-
-        print(name, username, password)
 
         if name.strip()=="" or username.strip()=="" or password.strip()=="":
             self.toast_value.set("Please enter all the fields.")

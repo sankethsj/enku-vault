@@ -1,12 +1,11 @@
-from pathlib import Path
-
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
 from src.components.collapsible_frame import CollapsingFrame
 from src.utils.store import read_data, write_data
+from src.utils.path_handler import resource_path
 
-IMG_PATH = Path(__file__).parent.parent / 'assets'
+
 
 class PasswordManager(ttk.Frame):
 
@@ -20,7 +19,7 @@ class PasswordManager(ttk.Frame):
                                  text="Refresh",
                                  bootstyle=INFO,
                                  cursor="hand2",
-                                 image=ttk.PhotoImage(file=IMG_PATH/'refresh-regular-24.png'),
+                                 image=ttk.PhotoImage(file=resource_path('src/assets/refresh-regular-24.png')),
                                  command=self.list_passwords
                                 )
         refresh_btn.pack(side=TOP, padx=8, pady=8, anchor="e")
@@ -61,7 +60,6 @@ class PasswordManager(ttk.Frame):
 
 
     def _delete_password_info(self, id):
-        print("Clicked delete button, id :", id)
         passwords = self.app_data["passwords"]
         self.app_data["passwords"] = [p for p in passwords if p["name"] != id]
 

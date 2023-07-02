@@ -1,11 +1,9 @@
-from pathlib import Path
-
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.scrolled import ScrolledFrame
 from ttkbootstrap.style import Bootstyle
 
-IMG_PATH = Path(__file__).parent.parent / 'assets'
+from src.utils.path_handler import resource_path
 
 
 class CollapsingFrame(ScrolledFrame):
@@ -20,8 +18,8 @@ class CollapsingFrame(ScrolledFrame):
 
         # widget images
         self.images = [
-            ttk.PhotoImage(file=IMG_PATH/'chevrons-down-regular-24.png'),
-            ttk.PhotoImage(file=IMG_PATH/'chevrons-right-solid-24.png')
+            ttk.PhotoImage(file=resource_path('src/assets/chevrons-down-regular-24.png')),
+            ttk.PhotoImage(file=resource_path('src/assets/chevrons-right-solid-24.png'))
         ]
 
     def add(self, child, title="", bootstyle=PRIMARY, **kwargs):
